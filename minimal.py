@@ -32,6 +32,9 @@ def main():
     columns.uniqueness()
     blocks.uniqueness()
 
+    # first redundant extension
+    cells.uniqueness()
+
     print_givens(givens)
     print '0'
 
