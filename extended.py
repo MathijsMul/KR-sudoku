@@ -5,11 +5,10 @@ from lib import cells, rows, columns, blocks
 
 def count_clauses(givens):
     givens = filter(lambda x: x != '.', givens)
-    cellD = 81
-    rowU = 9 * 9 * 36
-    colU = rowU
-    blockU = rowU
-    return len(givens) + cellD + rowU + colU + blockU
+    cellU = 2916
+    blockU = rowU = cellD = rowD = 81
+    blockU = colU = rowU = 9 * 9 * 36
+    return len(givens) + cellD + cellU + rowU + colU + blockU
 
 def main():
     if len(sys.argv) != 2:
@@ -31,6 +30,12 @@ def main():
     rows.uniqueness()
     columns.uniqueness()
     blocks.uniqueness()
+
+    # redundant extensions
+    cells.uniqueness()
+    rows.definedness()
+    columns.definedness()
+    blocks.definedness()
 
     print_givens(givens)
     print '0'
