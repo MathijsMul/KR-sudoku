@@ -36,6 +36,7 @@ def main():
     cells.uniqueness()
     rows.definedness()
     columns.definedness()
+    blocks.definedness()
 
     print_givens(givens)
     print '0'
