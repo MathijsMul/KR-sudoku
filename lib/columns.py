@@ -10,3 +10,11 @@ def uniqueness():
                     print str(-1 * variable(r1,c,v)),
                     print str(-1 * variable(r2,c,v)),
                     print '0'
+
+def definedness():
+    print 'c column definedness'
+    for col in range(0, 9):
+        for value in range(1,10):
+            for row in range(0,9):
+                print str(variable(row,col,value)),
+            print '0'
