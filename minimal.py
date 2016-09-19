@@ -1,7 +1,7 @@
 #!/usr/bin/python
 import sys
 from lib.utils import *
-from lib import cells, rows, columns, blocks
+from lib import cells, rows, columns, blocks, strategies
 
 def count_clauses(givens):
     givens = filter(lambda x: x != '.', givens)
@@ -33,10 +33,12 @@ def main():
     blocks.uniqueness()
 
     # redundant extensions
-    cells.uniqueness()
-    rows.definedness()
-    columns.definedness()
-    blocks.definedness()
+    #cells.uniqueness()
+    #rows.definedness()
+    #columns.definedness()
+    #blocks.definedness()
+
+    strategies.row_to_column()
 
     print_givens(givens)
     print '0'
