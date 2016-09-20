@@ -3,7 +3,7 @@
 
 # get solution from zchaff answer
 
-
+import sys
 from lib.utils import *
 
 def retrieve(variable):
@@ -27,19 +27,16 @@ def translate_solution(filename):
     answer = open(filename, 'r')
     for line in answer.readlines():
         for i in line.split(" "):
-            int(i)
-            variables.append(i)
-    #print(variables)
+            if i != '':
+                int(i)
+                variables.append(i)
     positives = filter(lambda x: int(x) > 0, variables)
-    #print(positives)
 
     solution = []
     for pos in positives:
         pos = int(pos)
         var = retrieve(pos)
-        #print(var)
         solution.append(var[2])
-    #print(solution)
     return solution
 
 def visualize(solution):
@@ -47,10 +44,8 @@ def visualize(solution):
     for j in range(0,73,9):
         row = '|'
         for i in range(j, j+9):
-            #string = '%d |', % (solution[i])
             row += ' ' + str(solution[i]) + ' |'
-        print(row)
-        
+        print(row)       
         print('-------------------------------------')
 
 def visualize_givens(givens):
@@ -63,6 +58,22 @@ def visualize_givens(givens):
         list_givens.append(value)
     visualize(list_givens)
         
-visualize_givens('....8.5....3.1.86.16.....7.....79.8..3.4..9.......6....5......44..1......72.3..1.')
-sol = translate_solution('testsudoku_solution.txt')
-visualize(sol)
+#visualize_givens('....8.5....3.1.86.16.....7.....79.8..3.4..9.......6....5......44..1......72.3..1.')
+#sol = translate_solution('testsudoku_solution.txt')
+#visualize(sol)
+
+
+def main():
+    if len(sys.argv) != 2:
+        print "Usage: "+sys.argv[0]+" 'sudoku SAT solution file'"
+        #print "Example: '....8.5....3.1.86.16.....7.....79.8..3.4..9.......6....5......44..1......72.3..1.'"
+        sys.exit(2)
+    filename = sys.argv[1]
+    sol = translate_solution(filename)
+    visualize(sol)
+ 
+
+if __name__ == "__main__":
+    main()
+
+
