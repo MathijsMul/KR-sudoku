@@ -10,7 +10,7 @@ def calc_col(off, cell):
     return col * 9
 
 def definedness():
-    print 'c block uniqueness'
+    print 'c block definedness'
 
     blocks_in_a_row = 3
     blocks_in_a_col = 3

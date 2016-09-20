@@ -9,7 +9,7 @@ def count_clauses(givens):
     rowU = 9 * 9 * 36
     colU = rowU
     blockU = rowU
-    return len(givens) + cellD + rowU + colU + blockU
+    return len(givens) + 338580
 
 def main():
     if len(sys.argv) != 2:
@@ -33,12 +33,14 @@ def main():
     blocks.uniqueness()
 
     # redundant extensions
-    #cells.uniqueness()
-    #rows.definedness()
-    #columns.definedness()
-    #blocks.definedness()
+    cells.uniqueness()
+    rows.definedness()
+    columns.definedness()
+    blocks.definedness()
 
-    strategies.row_to_column()
+    # human strategies
+    strategies.naked_twins_by_row()
+    strategies.naked_twins_by_col()
 
     print_givens(givens)
     print '0'
