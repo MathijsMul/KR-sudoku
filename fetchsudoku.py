@@ -1,3 +1,4 @@
+#!/usr/bin/python
 import requests
 import sys
 
@@ -10,7 +11,7 @@ def main():
     if r.status_code != requests.codes.ok:
         print "ERROR"
         exit(2)
-    print r.text.split()[3][:-1]
+    print r.text.split()[3][1:-2]
 
 if __name__ == "__main__":
     main()
