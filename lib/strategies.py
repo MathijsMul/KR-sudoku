@@ -33,12 +33,12 @@ def naked_twins_by_row():
                             for v3 in other_values:
                                 print str(variable(r,c1,v3)),
                                 print str(variable(r,c2,v3)),
-                            print str(-1* variable(r,c3,v1))
+                            print str(-1* variable(r,c3,v1)),0
 
                             for v3 in other_values:
                                 print str(variable(r,c1,v3)),
                                 print str(variable(r,c2,v3)),
-                            print str(-1* variable(r,c3,v2))
+                            print str(-1* variable(r,c3,v2)),0
 
 def naked_twins_by_col():
     print 'c naked twins by column'
@@ -53,9 +53,9 @@ def naked_twins_by_col():
                             for v3 in other_values:
                                 print str(variable(r1,c,v3)),
                                 print str(variable(r2,c,v3)),
-                            print str(-1* variable(r3,c,v1))
+                            print str(-1* variable(r3,c,v1)),0
 
                             for v3 in other_values:
                                 print str(variable(r1,c,v3)),
                                 print str(variable(r2,c,v3)),
-                            print str(-1* variable(r3,c,v2))
+                            print str(-1* variable(r3,c,v2)),0
