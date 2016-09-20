@@ -14,6 +14,18 @@
 \usepackage{setspace}
 \usepackage{graphicx}
 
+\newcommand{\dcell}{D_{\text{cell}}}
+\newcommand{\urow}{U_{\text{row}}}
+
+\newcommand{\ucol}{U_{\text{column}}}
+\newcommand{\ublock}{U_{\text{block}}}
+
+\newcommand{\ucell}{U_{\text{cell}}}
+\newcommand{\drow}{D_{\text{row}}}
+
+\newcommand{\dcol}{D_{\text{column}}}
+\newcommand{\dblock}{D_{\text{block}}}
+
 
 \begin{document}
 
@@ -46,6 +58,85 @@ For our data we have used Sudokus of fixed human difficulty degree from the data
 
 
 \section*{Results}
+
+First, the minimal propositional encoding of the Sudoku puzzle has to be determined. This only requires the basic constraints, which on their own are enough to define the game, namely:
+
+\begin{itemize}
+
+\item $\dcell$: \textbf{Definedness of cells}: all cells in the grid should contain at least one value from the set $\{i | 1 \leq i \leq n^2\}$.
+
+\item $\urow$: \textbf{Uniqueness in rows}: in each row, all values from the set $\{i | 1 \leq i \leq n^2\}$ should feature at most once. 
+
+\item $\ucol$: \textbf{Uniqueness in columns}: idem for columns. 
+
+\item $\ublock$: \textbf{Uniqueness in blocks}: idem for blocks. 
+
+\end{itemize}
+
+In order to give an adequate representation in propositional logic, we define $(n^2)^3$ variables of the form $(r,c,v)$, where $r$ denotes row number, $c$ denotes column number and $v$ denotes number value of the cell whose location in the grid is specified by $r$ and $c$. With these variables we can formulate the following propositional encoding of the above-mentioned constraints:  
+
+\begin{itemize}
+
+\item $\dcell$: 
+$\bigwedge_{r=1}^{n^2} \bigwedge_{c=1}^{n^2} \bigvee_{v=1}^{n^2} (r,c,v)$
+
+\item $\urow$:
+$\bigwedge_{r=1}^{n^2} \bigwedge_{v=1}^{n^2}\bigwedge_{c_i=n}^{n^2 - 1} \bigwedge_{c_j=c_i+1}^{n^2} \neg(r,c_i,v) \lor \neg(r,c_j,v)$
+
+
+\item $\ucol$: 
+$\bigwedge_{c=1}^{n^2} \bigwedge_{v=1}^{n^2}\bigwedge_{r_i=n}^{n^2-1} \bigwedge_{r_j=r_i+1}^{n^2} \neg(r_i,c,v) \lor \neg(r_j,c,v)$
+
+
+\item $\ublock$:  
+$\bigwedge_{r_{\text{block}} = 1}^{n} \bigwedge_{c_{\text{block}} = 1}^{n}\bigwedge_{v=1}^{n^2} \bigwedge_{r = 1}^{n^2} \bigwedge_{c = r + 1}^{n^2} \neg(r_{\text{block}} n + r \mod n,c_{\text{block}} n + r \mod n,v) \lor \neg(r_{\text{block}} n + c \mod n,c_{\text{block}} n + c \mod n,v)$
+
+\end{itemize}
+
+We let $E_{\text{minimal}} = \{\dcell,\urow,\ucol,\ublock\}$ denote the minimal encoding. From this minimal set of constraints, we can derive some other constraints, which will be added as redundancies. The most elementary redundancies to consider are the following: 
+
+
+\begin{itemize}
+
+\item $\ucell$: \textbf{Uniqueness of cells}: all cells in the grid should contain at most one value from the set $\{i | 1 \leq i \leq n^2\}$.
+
+\item $\drow$: \textbf{Definedness in rows}: in each row, all values from the set $\{i | 1 \leq i \leq n^2\}$ should feature at least once. 
+
+\item $\dcol$: \textbf{Definedness in columns}: idem for columns. 
+
+\item $\dblock$: \textbf{Definedness in blocks}: idem for blocks. 
+
+\end{itemize}
+
+Propositional encoding is as follows: 
+
+\begin{itemize}
+
+\item $\ucell$: 
+$\bigwedge_{r=1}^{n^2} \bigwedge_{c=1}^{n^2}\bigwedge_{v_i=n}^{n^2 - 1} \bigwedge_{v_j=v_i+1}^{n^2} \neg(r,c,v_i) \lor \neg(r,c,v_j)$
+
+
+\item $\drow$:
+$\bigwedge_{r=1}^{n^2} \bigwedge_{v=1}^{n^2} \bigvee_{c=1}^{n^2} (r,c,v)$
+
+\item $\dcol$: 
+$\bigwedge_{c=1}^{n^2} \bigwedge_{v=1}^{n^2} \bigvee_{r=1}^{n^2} (r,c,v)$
+
+\item $\dblock$:  
+$\bigwedge_{r_{\text{block}} = 1}^{n} \bigwedge_{c_{\text{block}} = 1}^{n}\bigwedge_{v=1}^{n^2} \bigvee_{r = 1}^{n} \bigvee_{c = 1}^{n} (r_{\text{block}} n + r ,c_{\text{block}} n +c,v) $
+
+\end{itemize}
+
+We let $E_{\text{extended}} = E_{\text{minimal}} \cup \{\ucell,\drow,\dcol,\dblock\}$ denote the extended encoding comprising the minimal constraints in addition to the redundancies listed above. 
+
+In addition to the extension thus defined, we are interested in human Sudoku solving techniques, i.e. so-called 'pencil and paper' algorithms that are usually applied intuitively and informally. Such strategies could also be seen as logical consequences of $E_{\text{minimal}}$. Strictly speaking, they add no new information or constraints, but by efficient filtering of the infinitely many implications of the basic Sudoku axioms, they do make solving the puzzles easier. We want to encode such strategies, add them to the propositional Sudoku representation and study how this impacts the computational effort needed by a SAT enging to find solutions. According to our hypothesis, extending the encoding with such information should make computation easier, not only for a human solver, but also for a SAT solver.
+
+
+%Naked Twins
+
+
+
+
 
 There is a minimal CNF representation of the Sudoku game including the following clauses:
 - existence of cell values
