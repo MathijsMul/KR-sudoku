@@ -38,8 +38,6 @@ def main():
     #columns.definedness()
     #blocks.definedness()
 
-    strategies.row_to_column()
-
     print_givens(givens)
     print '0'
 
