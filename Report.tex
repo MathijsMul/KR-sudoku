@@ -26,6 +26,8 @@
 \newcommand{\dcol}{D_{\text{column}}}
 \newcommand{\dblock}{D_{\text{block}}}
 
+\newcommand{\lp}{\left(}
+\newcommand{\rp}{\right)}
 
 \begin{document}
 
@@ -129,31 +131,29 @@ $\bigwedge_{r_{\text{block}} = 1}^{n} \bigwedge_{c_{\text{block}} = 1}^{n}\bigwe
 
 We let $E_{\text{extended}} = E_{\text{minimal}} \cup \{\ucell,\drow,\dcol,\dblock\}$ denote the extended encoding comprising the minimal constraints in addition to the redundancies listed above. 
 
-In addition to the extension thus defined, we are interested in human Sudoku solving techniques, i.e. so-called 'pencil and paper' algorithms that are usually applied intuitively and informally. Such strategies could also be seen as logical consequences of $E_{\text{minimal}}$. Strictly speaking, they add no new information or constraints, but by efficient filtering of the infinitely many implications of the basic Sudoku axioms, they do make solving the puzzles easier. We want to encode such strategies, add them to the propositional Sudoku representation and study how this impacts the computational effort needed by a SAT enging to find solutions. According to our hypothesis, extending the encoding with such information should make computation easier, not only for a human solver, but also for a SAT solver.
+In addition to the extension thus defined, we are interested in human Sudoku solving techniques, i.e. so-called `pencil and paper' algorithms that are usually applied intuitively and informally. Such strategies could also be seen as logical consequences of $E_{\text{minimal}}$. Strictly speaking, they add no new information or constraints, but by efficient filtering of the infinitely many implications of the basic Sudoku axioms, they do make solving the puzzles easier. We want to encode such a strategy, add it to the propositional Sudoku representation and study how this impacts the computational effort needed by a SAT enging to find solutions. According to our hypothesis, extending the encoding with such information should make computation easier, not only for a human solver, but also for a SAT solver.
+
+In particular, we decided to look at the so-called `Naked Twins' strategy, as it is a basic and well-known human Sudoku solving method. The strategy makes use of an exclusion rule that can be described and formalised as follows:
+
+\begin{itemize}
+
+\item $ R_{\text{NT}}$: \textbf{Naked Twins}: if two cells in a unit are such that together they must contain two specific numbers, but the order is unknown, then no other cells in this unit should contain either of of these numbers. If we consider the row units, then the propositional formalisation is as follows: 
+ 
+$\bigwedge_{r=1}^{n^2} \bigwedge_{c_1=1}^{n^2-1}\bigwedge_{c_2=c_1 + 1}^{n^2} \bigwedge_{v_1=1}^{n^2 - 1} \bigwedge_{v_2=v_1 + 1}^{n^2} \bigwedge_{c_3 \neq c_1,c_2} $
+
+$\;\;\;\;\;\;\;\;\;\;\;\; \lp \bigvee_{v_3 \neq v_1,v_2} \lp (r,c_1,v_3) \lor (r,c_2,v_3)\rp \lor ( (r,c_3,v_1) \lor (r,c_3,v_2)) \rp $
 
 
-%Naked Twins
+\end{itemize}
 
 
 
 
 
-There is a minimal CNF representation of the Sudoku game including the following clauses:
-- existence of cell values
-- uniqueness in rows
-- uniqueness in columns
-- uniqueness in blocks
-- representation of given numbers
 
-% GIVE FORMULAS
+Also did row completion, out of memory. 
 
-Can be extended with
-- cell uniqueness
-- row defined
-- col defined
-- block defined
 
-- human strategies (?)
 
 for each: show computational statistics 
 
