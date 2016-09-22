@@ -35,31 +35,26 @@
 \author{Pasquale Muscettola, Mathijs Mul}
 \maketitle
 
-\section*{Introduction}
-
-The Sudoku game is defined by a set of rules that can be considered as constraints on the admissible set of number assignments in the grid. These constraints depend on the distribution of the set of available numbers over the spatial units that are identified. Traditionally, $n^2$ rows, columns and blocks are distinguished, each of  which contain a total of $n^2$ cells, where $n =3$ is most conventional. In this paper, we will focus on this standard Sudoku format, whose solution requires the numbers 1 to 9 to be placed once and only once in each row, column and block. 
-
-Logically, the constraints governing the Sudoku game can be considered as a set of axioms, which allow for the inference from an initial assignment of given numbers to a completely filled out grid through a number of intermediate reasoning steps. Each configuration of numbers that follows from the given assignment in accordance with the rules of the game can thus be seen as a 'theorem' of the particular Sudoku. Continuing this logic is eventually supposed to culminate in a correct solution to the puzzle.  
-
-We will take this logical approach on the traditional $n = 3$ Sudoku format, and investigate different possible encodings of the game constraints. After identifying the minimal set of constraints that are necessary and sufficient in characterising the game, we will identify several extensions and variations. Using a SAT solver we will then study how the different and extended encodings influence the computational effort that is needed to solve puzzles that have been indicated to be of the same (human) difficulty rate on an online database. 
-
-Thus, what we will do is look at alternative Sudoku encodings that are logically implied by the minimal set of constraints, and that could thus be considered redundant from a purely syntactic point of view. In particular, we wish to look at techniques that human solvers use to address Sudoku puzzles, formalize such strategies and add them to the encoding to study how this influences the required computational effort. Logically, such strategies could also be considered superfluous, as they follow from the general axioms and thus provide no new information. An interest in the difference between the computaional and the logical impact of adding such redundancies is the main motivation for this research. 
-
-
 \section*{Hypothesis}
 
-We hypothesize that adding clauses to the encoding of the Sudoku game will speed up the computation that is carried out by a SAT engine to find a solution. Even though such propositions are implied by the minimal set of constraints characterising the game, so that they are logically redundant, we expect that including them in the propositional representation of the game will lead to computational speed-up. 
+%The Sudoku game is defined by a set of rules that can be considered as constraints on the admissible set of number assignments in the grid. These constraints depend on the distribution of the set of available numbers over the spatial units that are identified. Traditionally, $n^2$ rows, columns and blocks are distinguished, each of  which contain a total of $n^2$ cells, where $n =3$ is most conventional. In this paper, we will focus on this standard Sudoku format, whose solution requires the numbers 1 to 9 to be placed once and only once in each row, column and block. 
 
-\section*{Method, metric and data set}
+Logically, the constraints governing the Sudoku game can be considered as a set of axioms, which allow for the inference from an initial assignment of given numbers to a completely filled out grid through a number of intermediate reasoning steps. Each configuration of numbers that follows from the given assignment in accordance with the rules of the game can thus be seen as a 'theorem' of the particular Sudoku. Continuing this logic is eventually supposed to culminate in a correct solution to the puzzle. Taking this logical approach on the traditional $n = 3$ Sudoku format, we will investigate different possible encodings of the game constraints. After identifying the minimal set of constraints that are necessary and sufficient in characterising the game, we will identify several extensions and variations. Using a SAT solver we will then study how the different and extended encodings influence the computational effort that is needed to solve puzzles that have been indicated to be of the same (human) difficulty rate on an online database. 
 
-The notion of computational effort at stake in this project is identified as the number of decisions that have to be made by a SAT solver in order to complete a Sudoku puzzle. This is our metric of computational `hardness'. We use the deterministic zChaff SAT solver, as it functions very well and provides the statistics we need. 
-% average runtime?
-% consider alternative solvers? 
+Thus, what we will do is look at alternative Sudoku encodings that are logically implied by the minimal set of constraints, and that could thus be considered redundant from a purely syntactic point of view. In particular, we wish to look at techniques that human solvers use to address Sudoku puzzles, formalize such strategies and add them to the encoding to study how this influences the required computational effort. Logically, such strategies could also be considered superfluous, as they follow from the general axioms and thus provide no new information. An interest in the difference between the computational and the logical impact of adding such redundancies is the main motivation for this research. 
 
-For our data we have used Sudokus of fixed human difficulty degree from the data base on the following website: www.thonky.com. 
+We hypothesize that \textbf{adding redundant clauses to the encoding of the Sudoku game will speed up the computation that is carried out by a SAT engine to find a solution}. Even though such propositions are implied by the minimal set of constraints characterising the game, so that they are logically redundant, we expect that including them in the propositional representation of the game will lead to computational speed-up. Our main reason for believing this is that adding constraints decreases the search space for a SAT solver, and should thus speed up the computation. 
 
+\section*{Experimental setup}
 
-\section*{Results}
+%describe it, motivate/justify it, discuss possible weaknesses or problems, how do you compensate for those. What dataset did you use, which metrics did you use, which variables did you vary, etc. 
+ 
+In order to test our hypothesis we used a large database of Sudokus from the website www.thonky.com, which are rated according to their difficulty as perceived by human solvers. We used the SAT solver zChaff to solve the puzzles, which comprises a deterministic algorithm that has achieved very well in SAT competitions and that provides clear statistical information with its output. 
+
+The notion of computational effort at stake in this project is identified as the number of decisions that have to be made by zChaff in order to complete a Sudoku puzzle. This is our metric of computational `hardness'. We chose not to base our conclusions on runtime, mainly because solving a Sudoku can be done very quickly by zChaff, so that the required time is in a range that is too sensitive to irrelevant background processes in the computer to be an accurate indication of underlying computational effort. 
+
+Before running any tests, we had to determine the different kinds of encodings of Sudoku puzzles that we wished to consider. In this, we decided to focus on three cases: one where we only work with the minimal set of constraints that are necessary and sufficient for characterising the game, a second one that uses a trivial extension of this minimal encoding, and a third one that incorporates the propositionalization of a human solving strategy. 
+ 
 
 First, the minimal propositional encoding of the Sudoku puzzle has to be determined. This only requires the basic constraints, which on their own are enough to define the game, namely:
 
@@ -141,7 +136,10 @@ In particular, we decided to look at the so-called `Naked Twins' strategy, as it
  
 $\bigwedge_{r=1}^{n^2} \bigwedge_{c_1=1}^{n^2-1}\bigwedge_{c_2=c_1 + 1}^{n^2} \bigwedge_{v_1=1}^{n^2 - 1} \bigwedge_{v_2=v_1 + 1}^{n^2} \bigwedge_{c_3 \neq c_1,c_2} $
 
-$\;\;\;\;\;\;\;\;\;\;\;\; \lp \bigvee_{v_3 \neq v_1,v_2} \lp (r,c_1,v_3) \lor (r,c_2,v_3)\rp \lor ( (r,c_3,v_1) \lor (r,c_3,v_2)) \rp $
+$\;\;\;\;\;\;\;\;\;\;\;\; \lp \bigvee_{v_3 \neq v_1,v_2} \lp (r,c_1,v_3) \lor (r,c_2,v_3)\rp \lor \neg (r,c_3,v_1) \rp 
+\wedge
+\lp \bigvee_{v_3 \neq v_1,v_2} \lp (r,c_1,v_3) \lor (r,c_2,v_3)\rp \lor \neg (r,c_3,v_2) \rp 
+$
 
 
 \end{itemize}
@@ -156,12 +154,40 @@ Also did row completion, out of memory.
 
 
 for each: show computational statistics 
+ 
+ 
+ 
+ 
+\section*{Experimental results}
+
+ describe your experimental findings, discuss if they are reliable etc.
+
+\section*{Interpretation}
+
+ what do your experimental results say about your hypothesis, do they confirm or falsify your hypothesis, do they show any further interesting lessons
+
+
+\section*{Conclusion} summary, future work: summarise your work and conclusions, and suggest new tasks or questions that follow from your work. 
+
+
+
+
+
+
+
+
+
+
+
+
+\section*{Results}
 
 \section*{Conclusion}
 
-
-
-
+future work:
+- consider larger sudokus/variations
+- encode more strategies
+- compare different sat solvers
 
 
 
