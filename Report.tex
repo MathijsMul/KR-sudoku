@@ -47,7 +47,7 @@ Logically, the constraints governing the Sudoku game can be considered as a set 
 
 Thus, what we will do is look at alternative Sudoku encodings that are logically implied by the minimal set of constraints, and that could thus be considered redundant from a purely syntactic point of view. In particular, we wish to look at techniques that human solvers use to address Sudoku puzzles, formalize such strategies and add them to the encoding to study how this influences the required computational effort. Logically, such strategies could also be considered superfluous, as they follow from the general axioms and thus provide no new information. An interest in the difference between the computational and the logical impact of adding such redundancies is the main motivation for this research. 
 
-We hypothesize that \textbf{adding redundant clauses to the encoding of the Sudoku game will speed up the computation that is carried out by a SAT engine to find a solution}. Even though such propositions are implied by the minimal set of constraints characterising the game, so that they are logically redundant, we expect that including them in the propositional representation of the game will lead to computational speed-up. Our main reason for believing this is that adding constraints decreases the search space for a SAT solver, and should thus speed up the computation. 
+We hypothesize that \textbf{adding redundant clauses to the encoding of the Sudoku game, in the form of trivial logical extensions and human strategies, will decrease the computational effort needed by a SAT engine to find a solution}. Even though such propositions are implied by the minimal set of constraints characterising the game, so that they are logically redundant, we expect that including them in the propositional representation of the game will lead to computational speed-up. Our main reason for believing this is that adding constraints decreases the search space for a SAT solver, and should thus speed up the computation. 
 
 \section*{Experimental setup}
 
@@ -55,7 +55,7 @@ We hypothesize that \textbf{adding redundant clauses to the encoding of the Sudo
  
 In order to test our hypothesis we used a large database of Sudokus from the website www.thonky.com, which are rated according to their difficulty as perceived by human solvers. We used the SAT solver zChaff to solve the puzzles, which comprises a deterministic algorithm that has achieved very well in SAT competitions and that provides clear statistical information with its output. 
 
-The notion of computational effort at stake in this project is identified as the number of decisions that have to be made by zChaff in order to complete a Sudoku puzzle. This is our metric of computational `hardness' or `speed'. We chose not to base our conclusions on runtime, mainly because solving a Sudoku can be done very quickly by zChaff, so that the required time is in a range that is too sensitive to irrelevant background processes in the computer to be an accurate indication of underlying computational effort. However, as we considered a large collection of puzzles, we still looked at relative differences in runtime between different cases. 
+The notion of computational effort at stake in this project is identified as the number of decisions that have to be made by zChaff in order to complete a Sudoku puzzle. This is our metric of computational `hardness'. We chose not to base our conclusions on runtime, mainly because solving a Sudoku can be done very quickly by zChaff, so that the required time is in a range that is too sensitive to irrelevant background processes in the computer to be an accurate indication of underlying computational effort. However, as we considered a large collection of puzzles, we still looked at relative differences in runtime between different cases. 
 
 Before running any tests, we had to determine the different kinds of encodings of Sudoku puzzles that we wished to consider. In this, we decided to focus on three cases: one where we only work with the minimal set of constraints that are necessary and sufficient for characterising the game, a second one that uses a trivial extension of this minimal encoding, and a third one that incorporates the propositionalization of a human solving strategy. 
 
@@ -165,12 +165,12 @@ The Sudokus in our dataset have a human difficulty rating, which we realized may
 Moreover, we only considered proper Sudokus, because improper ones require the solver to make a non-deterministic decision at some point, which is an action that cannot be accounted for on the basis of the minimal set of rules captured by $E_{\text{minimal}}$ that we considered as a definition of the game. This set is also most common for human pencil and paper puzzles, and as we are mainly interested in drawing the comparison between human and computational effort, we decided not to deviate from it. 
 
 
-
 \section*{Experimental results}
 
 %describe your experimental findings, discuss if they are reliable etc.
  
 Running the experiment as described in the above yielde the following results, where all values are averaged over the 100 test Sudokus for each difficulty category:
+
 
 \begin{table}[]
 \centering
@@ -182,22 +182,30 @@ Running the experiment as described in the above yielde the following results, w
 >{\columncolor[HTML]{FFFFFF}}c |
 >{\columncolor[HTML]{FFFFFF}}c |
 >{\columncolor[HTML]{FFFFFF}}c |
->{\columncolor[HTML]{FFFFFF}}c |
->{\columncolor[HTML]{FFFFFF}}c |
 >{\columncolor[HTML]{FFFFFF}}c |}
 \hline
-human difficulty & encoding            & decision level & number of decisions & runtime     & conflict clauses & conflict literals & number of implications \\ \hline
-                 & $E_{\text{minimal}}$  & 10.8438        & 42.0859             & 0.000737133 & 14.6797          & 750.445           & 1959.81                \\ \cline{2-8} 
-easy             & $E_{\text{extended}}$ & 0.625          & 1.82812             & 0.000481484 & 0.320312         & 15.0312           & 743.125                \\ \cline{2-8} 
-                 & $E_{\text{strategy}}$ & 0.716535       & 2.02362             & 0.0543418   & 0.425197         & 34.4016           & 758.858                \\ \hline
-                 & $E_{\text{minimal}} $ & 12.0515        & 53.8515             & 0.000940952 & 19.1455          & 1111.11           & 2349.26                \\ \cline{2-8} 
-medium           & $E_{\text{extended}}$ & 1.61515        & 3.28182             & 0.000484706 & 0.930303         & 44.4455           & 758.967                \\ \cline{2-8} 
-                 & $E_{\text{strategy}} $& 1.13982        & 2.79635             & 0.0554446   & 1.07295          & 51.7204           & 766.167                \\ \hline
-                 & $E_{\text{minimal}} $ & 12.883         & 57.1585             & 0.00098467  & 20.2698          & 1192.21           & 2497.61                \\ \cline{2-8} 
-hard             & $E_{\text{extended}}$ & 2.04528        & 3.84717             & 0.000502104 & 1.16415          & 59.5189           & 785.432                \\ \cline{2-8} 
-                 &$ E_{\text{strategy}}$ & 1.30624        & 3.23819             & 0.0592149   & 1.41399          & 85.811            & 810.684                \\ \hline
+human difficulty & encoding              & decision level & number of decisions & runtime     & number of implications \\ \hline
+                 & $E_{\text{minimal}}$  & 10.8438        & 42.0859             & 0.000737133 & 1959.81                \\ \cline{2-6} 
+easy             & $E_{\text{extended}}$ & 0.625          & 1.82812             & 0.000481484 & 743.125                \\ \cline{2-6} 
+                 & $E_{\text{strategy}}$ & 0.716535       & 2.02362             & 0.0543418   & 758.858                \\ \hline
+                 & $E_{\text{minimal}}$  & 12.0515        & 53.8515             & 0.000940952 & 2349.26                \\ \cline{2-6} 
+medium           & $E_{\text{extended}}$ & 1.61515        & 3.28182             & 0.000484706 & 758.967                \\ \cline{2-6} 
+                 & $E_{\text{strategy}}$ & 1.13982        & 2.79635             & 0.0554446   & 766.167                \\ \hline
+                 & $E_{\text{minimal}}$  & 12.883         & 57.1585             & 0.00098467  & 2497.61                \\ \cline{2-6} 
+hard             & $E_{\text{extended}}$ & 2.04528        & 3.84717             & 0.000502104 & 785.432                \\ \cline{2-6} 
+                 & $E_{\text{strategy}}$ & 1.30624        & 3.23819             & 0.0592149   & 810.684                \\ \hline
 \end{tabular}
 \end{table}
+
+
+
+We provide the following visualizations:
+
+
+\includegraphics[scale=0.5]{chart_decisions.png}
+
+
+\includegraphics[scale=0.5]{chart_runtime.png}
 
  
 
@@ -205,8 +213,21 @@ hard             & $E_{\text{extended}}$ & 2.04528        & 3.84717             
 
 %what do your experimental results say about your hypothesis, do they confirm or falsify your hypothesis, do they show any further interesting lessons
 
+Our results, and especially the visualized number of decisions, show clearly that the minimal encoding requires the SAT solver to make a significantly higher number of decisions than the extended and strategy encodings. This holds for all human difficulty degrees that we considered. Indeed, after extending $E_{\text{minimal}}$ to $E_{\text{extended}}$ the number of necessary decisions is already drastically reduced, and the extra encoding of the Naked Twins strategy does not lead to a significant improvement on top of this. In general, we can say that the results show that adding logically redundant constraints to the Sudoku encoding significantly reduces the computational effort required by zChaff to find a solution, irrespective of the human difficulty rating. This is in accordance with our hypothesis. 
 
-\section*{Conclusion} summary, future work: summarise your work and conclusions, and suggest new tasks or questions that follow from your work. 
+Some other interesting finding, that we did not decide to focus on in the research but that emerged from the statistical results, is that the runtime develops in the opposite direction: for $E_{\text{minimal}}$ to $E_{\text{extended}}$ it is of comparable order of magnitude, whereas for $E_{\text{strategy}}$ it increases dramatically. Thus, although encoding the Naked Twins strategy reduces the required number of decisions, and thus decreases computational effort as we decided to regard it, it does not decrease the needed runtime. In fact, the runtime becomes much higher. This can be explained by the great increase of the number of clauses in the encoding  $E_{\text{strategy}}$: the high number of constraints necessitates very few decisions, but because the CNF becomes so large, the runtime grows. 
+
+
+\section*{Conclusion} 
+
+%summary, future work: summarise your work and conclusions, and suggest new tasks or questions that follow from your work. 
+
+In summary, we can conclude that our experiment has confirmed our hypothesis: adding redundant clauses to the minimal Sudoku encoding in propositional logic reduces the computational effort required by the SAT solver zChaff to find a solution, as measured in terms of the number of decisions. Moreover, this finding is robust for different human difficulty ratings: we see the same relationship for puzzles that were evaluated as easy, medium and hard. 
+
+However, encoding the human pencil and paper strategy of Naked Twins does not give significant computational benefits on top of the more or less trivial extension $E_{\text{extended}}$. So apparently this human strategy is of less computational interest for zChaff than the basic extension. This also shows that means of reducing the required human effort to solve a Sudoku puzzle, such as this strategy, do not necessarily entail great computational benefits for SAT solvers. 
+
+Our research  
+
 
 
 future work:
