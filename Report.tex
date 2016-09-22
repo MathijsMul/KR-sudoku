@@ -4,6 +4,9 @@
 \usepackage{amsfonts}
 \usepackage{amssymb}
 
+\usepackage{multirow}
+\usepackage[table,xcdraw]{xcolor}
+
 \addtolength{\oddsidemargin}{-.5in}
 \addtolength{\evensidemargin}{-.5in}
 \addtolength{\textwidth}{1in}
@@ -40,7 +43,7 @@ Knowledge Presentation - Project 1}
 
 %The Sudoku game is defined by a set of rules that can be considered as constraints on the admissible set of number assignments in the grid. These constraints depend on the distribution of the set of available numbers over the spatial units that are identified. Traditionally, $n^2$ rows, columns and blocks are distinguished, each of  which contain a total of $n^2$ cells, where $n =3$ is most conventional. In this paper, we will focus on this standard Sudoku format, whose solution requires the numbers 1 to 9 to be placed once and only once in each row, column and block. 
 
-Logically, the constraints governing the Sudoku game can be considered as a set of axioms, which allow for the inference from an initial assignment of given numbers to a completely filled out grid through a number of intermediate reasoning steps. Each configuration of numbers that follows from the given assignment in accordance with the rules of the game can thus be seen as a 'theorem' of the particular Sudoku. Continuing this logic is eventually supposed to culminate in a correct solution to the puzzle. Taking this logical approach on the traditional $n = 3$ Sudoku format, we will investigate different possible encodings of the game constraints. After identifying the minimal set of constraints that are necessary and sufficient in characterising the game, we will identify several extensions and variations. Using a SAT solver we will then study how the different and extended encodings influence the computational effort that is needed to solve puzzles that have been indicated to be of the same (human) difficulty rate on an online database. 
+Logically, the constraints governing the Sudoku game can be considered as a set of axioms, which allow for the inference from an initial assignment of given numbers to a completely filled out grid through a number of intermediate reasoning steps. Each configuration of numbers that follows from the given assignment in accordance with the rules of the game can thus be seen as a 'theorem' of the particular Sudoku. Continuing this logic is eventually supposed to culminate in a correct solution to the puzzle. Taking this logical approach on the traditional $n = 3$ Sudoku format, we will investigate different possible encodings of the game constraints in Propositional Logic. After identifying the minimal set of constraints that are necessary and sufficient in characterising the game, we will identify several extensions and variations. Using a SAT solver we will then study how the different and extended encodings influence the computational effort that is needed to solve puzzles that have been indicated to be of the same (human) difficulty rate on an online database. 
 
 Thus, what we will do is look at alternative Sudoku encodings that are logically implied by the minimal set of constraints, and that could thus be considered redundant from a purely syntactic point of view. In particular, we wish to look at techniques that human solvers use to address Sudoku puzzles, formalize such strategies and add them to the encoding to study how this influences the required computational effort. Logically, such strategies could also be considered superfluous, as they follow from the general axioms and thus provide no new information. An interest in the difference between the computational and the logical impact of adding such redundancies is the main motivation for this research. 
 
@@ -52,7 +55,7 @@ We hypothesize that \textbf{adding redundant clauses to the encoding of the Sudo
  
 In order to test our hypothesis we used a large database of Sudokus from the website www.thonky.com, which are rated according to their difficulty as perceived by human solvers. We used the SAT solver zChaff to solve the puzzles, which comprises a deterministic algorithm that has achieved very well in SAT competitions and that provides clear statistical information with its output. 
 
-The notion of computational effort at stake in this project is identified as the number of decisions that have to be made by zChaff in order to complete a Sudoku puzzle. This is our metric of computational `hardness'. We chose not to base our conclusions on runtime, mainly because solving a Sudoku can be done very quickly by zChaff, so that the required time is in a range that is too sensitive to irrelevant background processes in the computer to be an accurate indication of underlying computational effort. 
+The notion of computational effort at stake in this project is identified as the number of decisions that have to be made by zChaff in order to complete a Sudoku puzzle. This is our metric of computational `hardness' or `speed'. We chose not to base our conclusions on runtime, mainly because solving a Sudoku can be done very quickly by zChaff, so that the required time is in a range that is too sensitive to irrelevant background processes in the computer to be an accurate indication of underlying computational effort. However, as we considered a large collection of puzzles, we still looked at relative differences in runtime between different cases. 
 
 Before running any tests, we had to determine the different kinds of encodings of Sudoku puzzles that we wished to consider. In this, we decided to focus on three cases: one where we only work with the minimal set of constraints that are necessary and sufficient for characterising the game, a second one that uses a trivial extension of this minimal encoding, and a third one that incorporates the propositionalization of a human solving strategy. 
 
@@ -66,7 +69,9 @@ First, the minimal propositional encoding of the Sudoku puzzle must be determine
 
 \item $\ucol$: \textbf{Uniqueness in columns}: idem for columns. 
 
-\item $\ublock$: \textbf{Uniqueness in blocks}: idem for blocks. 
+\item $\ublock$: \textbf{Uniqueness in blocks}: idem for blocks.
+
+\item $N_{\text{assigned}}$ : \textbf{Assigned numbers}: the numbers given in the Sudoku grid cannot be changed. 
 
 \end{itemize}
 
@@ -88,9 +93,13 @@ $\bigwedge_{c=1}^{n^2} \bigwedge_{v=1}^{n^2}\bigwedge_{r_i=n}^{n^2-1} \bigwedge_
 \item $\ublock$:  
 $\bigwedge_{r_{\text{block}} = 1}^{n} \bigwedge_{c_{\text{block}} = 1}^{n}\bigwedge_{v=1}^{n^2} \bigwedge_{r = 1}^{n^2} \bigwedge_{c = r + 1}^{n^2} \neg(r_{\text{block}} n + r \mod n,c_{\text{block}} n + r \mod n,v) \lor \neg(r_{\text{block}} n + c \mod n,c_{\text{block}} n + c \mod n,v)$
 
+\item $N_{\text{assigned}}$ : 
+$\bigwedge_{\text{Assigned}} (r,c,v)$ for Assigned = $\{ (r,c,v) | (r,c,v) $ is given$\}$.
+
+
 \end{itemize}
 
-We let $E_{\text{minimal}} = \{\dcell,\urow,\ucol,\ublock\}$ denote the minimal encoding. From this minimal set of constraints, we can derive some other constraints, which will be added as redundancies. The most elementary redundancies to consider are the following: 
+We let $E_{\text{minimal}} = \{\dcell,\urow,\ucol,\ublock, N_{\text{assigned}}\}$ denote the minimal encoding. From this minimal set of constraints, we can derive some other constraints, which will be added as redundancies. The most elementary redundancies to consider are the following: 
 
 
 \begin{itemize}
@@ -141,100 +150,73 @@ $\;\;\;\;\;\;\;\;\;\;\;\; \lp \bigvee_{v_3 \neq v_1,v_2} \lp (r,c_1,v_3) \lor (r
 \lp \bigvee_{v_3 \neq v_1,v_2} \lp (r,c_1,v_3) \lor (r,c_2,v_3)\rp \lor \neg (r,c_3,v_2) \rp 
 $
 
+The Naked Twins strategy can be applied to columns as well, the propositional formalisation of which is completely analogous to the one for row, so we omit it here.
 
 \end{itemize}
 
+We let $R_{\text{NT-row}}$, $R_{\text{NT-column}}$ denote Naked Twins rule for rows and columns respectively, and let $E_{\text{strategy}} = E_{\text{extended}} \cup \{R_{\text{NT-row}}, R_{\text{NT-column}}\}$ be the extended encoding that also includes a representation of this strategy. 
+\footnote{
+An alternative human strategy that we encoded involved iterating over all possible permutations of $n^2 - 1$ numbers in each unit, and resulted in a CNF file that was more than 1 GB in size. This proved impossible to work with, and only gave segmentation faults when passed to the SAT solver, so we had to exclude it from the experiment.}
 
-The Naked Twins strategy can be applied to columns as well, the propositional formalisation of which is completely analogous to the one for row, so we omit it here. 
+With all definitions set up, the actual experiment was as follows: for each of three classes of human-rated difficulty degrees (easy, medium, hard), we extracted 100 Sudokus from our database, and let zChaff solve them for all three encodings $E_{\text{minimal}}, E_{\text{extended}} $ and $E_{\text{strategy}} $. We collected the data and studied the differences between the number of decisions required to solve the puzzle, the results of which are demonstrated in the next section. 
+
+The Sudokus in our dataset have a human difficulty rating, which we realized may be subject to debate and different experiences. To compensate for this, we used 100 Sudokus of every difficulty class, a number that we believed should be high enough to stabilize this factor. 
+
+Moreover, we only considered proper Sudokus, because improper ones require the solver to make a non-deterministic decision at some point, which is an action that cannot be accounted for on the basis of the minimal set of rules captured by $E_{\text{minimal}}$ that we considered as a definition of the game. This set is also most common for human pencil and paper puzzles, and as we are mainly interested in drawing the comparison between human and computational effort, we decided not to deviate from it. 
 
 
 
-
-
-Also did row completion, out of memory. 
-
-
-
-for each: show computational statistics 
- 
- 
- 
- 
 \section*{Experimental results}
 
- describe your experimental findings, discuss if they are reliable etc.
+%describe your experimental findings, discuss if they are reliable etc.
+ 
+Running the experiment as described in the above yielde the following results, where all values are averaged over the 100 test Sudokus for each difficulty category:
+
+\begin{table}[]
+\centering
+\caption{Results}
+\label{my-label}
+\begin{tabular}{|
+>{\columncolor[HTML]{FFFFFF}}c |
+>{\columncolor[HTML]{FFFFFF}}c |
+>{\columncolor[HTML]{FFFFFF}}c |
+>{\columncolor[HTML]{FFFFFF}}c |
+>{\columncolor[HTML]{FFFFFF}}c |
+>{\columncolor[HTML]{FFFFFF}}c |
+>{\columncolor[HTML]{FFFFFF}}c |
+>{\columncolor[HTML]{FFFFFF}}c |}
+\hline
+human difficulty & encoding            & decision level & number of decisions & runtime     & conflict clauses & conflict literals & number of implications \\ \hline
+                 & $E_{\text{minimal}}$  & 10.8438        & 42.0859             & 0.000737133 & 14.6797          & 750.445           & 1959.81                \\ \cline{2-8} 
+easy             & $E_{\text{extended}}$ & 0.625          & 1.82812             & 0.000481484 & 0.320312         & 15.0312           & 743.125                \\ \cline{2-8} 
+                 & $E_{\text{strategy}}$ & 0.716535       & 2.02362             & 0.0543418   & 0.425197         & 34.4016           & 758.858                \\ \hline
+                 & $E_{\text{minimal}} $ & 12.0515        & 53.8515             & 0.000940952 & 19.1455          & 1111.11           & 2349.26                \\ \cline{2-8} 
+medium           & $E_{\text{extended}}$ & 1.61515        & 3.28182             & 0.000484706 & 0.930303         & 44.4455           & 758.967                \\ \cline{2-8} 
+                 & $E_{\text{strategy}} $& 1.13982        & 2.79635             & 0.0554446   & 1.07295          & 51.7204           & 766.167                \\ \hline
+                 & $E_{\text{minimal}} $ & 12.883         & 57.1585             & 0.00098467  & 20.2698          & 1192.21           & 2497.61                \\ \cline{2-8} 
+hard             & $E_{\text{extended}}$ & 2.04528        & 3.84717             & 0.000502104 & 1.16415          & 59.5189           & 785.432                \\ \cline{2-8} 
+                 &$ E_{\text{strategy}}$ & 1.30624        & 3.23819             & 0.0592149   & 1.41399          & 85.811            & 810.684                \\ \hline
+\end{tabular}
+\end{table}
+
+ 
 
 \section*{Interpretation}
 
- what do your experimental results say about your hypothesis, do they confirm or falsify your hypothesis, do they show any further interesting lessons
+%what do your experimental results say about your hypothesis, do they confirm or falsify your hypothesis, do they show any further interesting lessons
 
 
 \section*{Conclusion} summary, future work: summarise your work and conclusions, and suggest new tasks or questions that follow from your work. 
 
 
-
-
-
-
-
-
-
-
-
-
-\section*{Results}
-
-\section*{Conclusion}
-
 future work:
 - consider larger sudokus/variations
 - encode more strategies
 - compare different sat solvers
+- improper sudokus
 
 
 
 
-NOTES
-
-basic rules: axioms, techniques as logical consequences, logically redundant but may ease computation
-	look at possible variations in basic axioms of
-encodings (human techniques, jellyfish, xwings, naked singles)
-look at different difficulty degrees
-possibly consider improper sudokus too?
-
-Goal: investigate different CNF representations of the Sudoku game constraints and study how they influence the computational hardness of SAT solving games (measured in flips)
-
-There is a minimal CNF representation of the Sudoku game including the following clauses:
-- existence of cell values
-- uniqueness in rows
-- uniqueness in columns
-- uniqueness in blocks
-- representation of given numbers
-
-However, in manually solving a Sudoku puzzle, humans do not exclusively rely on these bare rules, but use them to infer ‘theorems’ and strategies that make solving easier.  As a seemingly trivial example: cell values must not only exist, but also be unique, and existence constraints also apply to rows/columns/blocks.
-
-Specifically: 
-* consider minor extensions of minimal representation 
-* consider particular methods employed by Sudoku players, represent them in CNF, add them to the Sudoku representation and investigate impact on computational effort. 
-
-(2) Method, metric and dataset
-
-We are considering computational effort, and will be using the required number of flips as a measure. (Required running time should follow form these data in a device-specific way.)
-
-(3) Dataset
-
-%http://www.thonky.com/sudoku/ and scrape as per
-%http://www.thonky.com/sandbox/new-sudoku/ThonkySudokuJavascript.js?puzzle_id=&difficulty=&puzzle_id=
-
-or
-http://www.menneske.no/sudoku/
-and extract from html, so better use the other one. 
-
-(4) Solver
-
-We will use the zChaff SAT solver, because it appears to be the best one that is currently available. 
-
-Important reference:
-http://www.cs.cmu.edu/~hjain/papers/sudoku-as-SAT.pdf
 
 \end{document}
