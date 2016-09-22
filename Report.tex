@@ -31,7 +31,8 @@
 
 \begin{document}
 
-\title{Knowledge Presentation - Project 1: Sudoku Encodings}
+\title{SAT Solving Sudokus with Encoded Redundancies and Human Strategies \\
+Knowledge Presentation - Project 1}
 \author{Pasquale Muscettola, Mathijs Mul}
 \maketitle
 
@@ -54,9 +55,8 @@ In order to test our hypothesis we used a large database of Sudokus from the web
 The notion of computational effort at stake in this project is identified as the number of decisions that have to be made by zChaff in order to complete a Sudoku puzzle. This is our metric of computational `hardness'. We chose not to base our conclusions on runtime, mainly because solving a Sudoku can be done very quickly by zChaff, so that the required time is in a range that is too sensitive to irrelevant background processes in the computer to be an accurate indication of underlying computational effort. 
 
 Before running any tests, we had to determine the different kinds of encodings of Sudoku puzzles that we wished to consider. In this, we decided to focus on three cases: one where we only work with the minimal set of constraints that are necessary and sufficient for characterising the game, a second one that uses a trivial extension of this minimal encoding, and a third one that incorporates the propositionalization of a human solving strategy. 
- 
 
-First, the minimal propositional encoding of the Sudoku puzzle has to be determined. This only requires the basic constraints, which on their own are enough to define the game, namely:
+First, the minimal propositional encoding of the Sudoku puzzle must be determined. This only requires the basic constraints, which on their own are enough to define the game, namely:
 
 \begin{itemize}
 
@@ -126,7 +126,7 @@ $\bigwedge_{r_{\text{block}} = 1}^{n} \bigwedge_{c_{\text{block}} = 1}^{n}\bigwe
 
 We let $E_{\text{extended}} = E_{\text{minimal}} \cup \{\ucell,\drow,\dcol,\dblock\}$ denote the extended encoding comprising the minimal constraints in addition to the redundancies listed above. 
 
-In addition to the extension thus defined, we are interested in human Sudoku solving techniques, i.e. so-called `pencil and paper' algorithms that are usually applied intuitively and informally. Such strategies could also be seen as logical consequences of $E_{\text{minimal}}$. Strictly speaking, they add no new information or constraints, but by efficient filtering of the infinitely many implications of the basic Sudoku axioms, they do make solving the puzzles easier. We want to encode such a strategy, add it to the propositional Sudoku representation and study how this impacts the computational effort needed by a SAT enging to find solutions. According to our hypothesis, extending the encoding with such information should make computation easier, not only for a human solver, but also for a SAT solver.
+In addition to the extension thus defined, we are interested in human Sudoku solving techniques, i.e. so-called `pencil and paper' algorithms that are usually applied intuitively and informally. Such strategies could also be seen as logical consequences of $E_{\text{minimal}}$. Strictly speaking, they add no new information, but by efficient filtering of the infinitely many implications of the basic Sudoku axioms, they do make solving the puzzles easier. We want to encode such a strategy, add it to the propositional Sudoku representation and study how this impacts the computational effort needed by zChaff to find solutions. According to our hypothesis, extending the encoding with such information should make computation easier, not only for a human solver, but also for a SAT solver.
 
 In particular, we decided to look at the so-called `Naked Twins' strategy, as it is a basic and well-known human Sudoku solving method. The strategy makes use of an exclusion rule that can be described and formalised as follows:
 
@@ -144,6 +144,8 @@ $
 
 \end{itemize}
 
+
+The Naked Twins strategy can be applied to columns as well, the propositional formalisation of which is completely analogous to the one for row, so we omit it here. 
 
 
 
