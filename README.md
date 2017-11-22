@@ -1,0 +1,3 @@
+# SAT Solving Sudokus with Encoded Redundancies and Human Strategies
+
+Different propositional encodings of the Sudoku rules are investigated: a minimal set of constraints, and several variations and extensions. Using a SAT solver we study how the different and extended encodings influence the computational effort that is needed to solve puzzles that have been indicated to be of the same (human) difficulty rate on an online database. See [report](report/report.pdf) for results and conclusions. Project for the UvA course Knowledge Representation. 
